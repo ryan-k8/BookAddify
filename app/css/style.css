@@ -1,0 +1,195 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+:root {
+  --primary-color: rgb(0, 183, 255);
+}
+
+.main-app {
+  display: flex;
+  height: 100vh;
+  align-items: start;
+  /* justify-content: center; */
+  flex-direction: column;
+}
+
+.fa-book-open {
+  background: var(--primary-color);
+  padding: 0.35rem;
+  border-radius: 50%;
+  color: #eee;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.fa-book-open:hover {
+  transform: scale(1.2) skew(2deg) translateY(-10px);
+}
+
+.modal-img {
+  display: block;
+  width: 80%;
+  max-height: 25rem;
+  margin: 0 auto;
+}
+
+.modal-title {
+  font-family: "Roboto";
+  font-size: 2rem;
+}
+
+.modal-author {
+  font-family: "Roboto";
+}
+
+.btn-toggler {
+  color: #000;
+  transition: all 0.5s;
+}
+
+.btn-toggler:hover {
+  color: var(--primary-color);
+  transform: scale(1.2);
+}
+
+.buy-highlight {
+  color: #fff;
+  padding: 0.25rem 1rem;
+  border-radius: 5px;
+  background: var(--bs-success);
+  transition: all 0.3s;
+}
+
+.search-section {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.search-section > div {
+  margin: 0 auto;
+  width: 80%;
+}
+/* media query for adjusting input size */
+@media (min-width: 768px) {
+  .search-section > div {
+    width: 60%;
+  }
+}
+#basic-addon1,
+#basic-addon2 {
+  border-radius: 6px !important;
+  background: var(--primary-color) !important;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+#basic-addon1:hover,
+#basic-addon2:hover {
+  transform: scale(1.1);
+  margin-right: 1rem;
+}
+
+#basic-addon1 .fa-search,
+.fa-plus {
+  color: #f4f4f4;
+}
+input.form-control {
+  border-radius: 8px !important;
+  transition: all 0.3s;
+}
+input.form-control:focus {
+  border: 2px solid var(--primary-color);
+  box-shadow: none;
+}
+
+.modal-dialog {
+  /* width: 750px; */
+  /* margin: 0 auto; */
+}
+
+.books-section {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.fa-trash {
+  transition: all 0.3s;
+}
+
+.fa-trash:hover {
+  transform: scale(1.2);
+  color: var(--bs-danger);
+}
+
+.modal-body > div {
+  height: 400px;
+}
+
+.spinner-border {
+  font-size: 2rem;
+  padding: 2.5rem;
+  color: var(--primary-color);
+}
+
+/* media query adjustments for smartphones  */
+@media (max-width: 576px) {
+  .search-section {
+    width: 100%;
+  }
+  .books-section {
+    width: 90%;
+    padding: 0.2rem;
+  }
+}
+
+.text-app {
+  color: var(--primary-color);
+}
+
+.books-div {
+  border: 1.4px solid #d6d6d6;
+  width: 80%;
+  margin: 1rem auto;
+}
+@media (max-width: 600px) {
+  .books-div {
+    width: 95%;
+  }
+}
+@media (min-width: 400px) and (max-width: 860px) {
+  .books-div {
+    width: 98%;
+  }
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+}
+@media (max-width: 600px) {
+  .flex-container {
+    flex-direction: column;
+  }
+  .book-img {
+    width: 100%;
+  }
+  .img-src {
+    margin: 0 auto;
+  }
+}
+
+.author-lead {
+  font-size: 1rem !important;
+}
+
+.book-summary-p {
+  font-size: 0.8rem;
+}
+
+.firebase-btn {
+  background: linear-gradient(#ffcc31, #ffa612);
+}
+
+.fa-fire-alt {
+  color: black;
+  background: rgb(255, 145, 0);
+  padding: 0.25rem;
+  border-radius: 50%;
+  font-size: 1rem;
+}
