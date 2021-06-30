@@ -1,5 +1,5 @@
 // Your web app's Firebase configuration
-var firebaseConfig = {
+firebaseConfig = {
   apiKey: "AIzaSyAJH95UxbtGoMW9Ucj0ztsskXZzcX8MzPk",
   authDomain: "bookaddify.firebaseapp.com",
   projectId: "bookaddify",
@@ -8,4 +8,7 @@ var firebaseConfig = {
   appId: "1:1031147019594:web:11cb1dfc09e71734aff5b3",
 };
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
+
+// firestore database
+const db = firebase.firestore(app);
