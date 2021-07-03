@@ -121,9 +121,10 @@ input.form-control:focus {
   height: 400px;
 }
 
-.spinner-border {
-  font-size: 2rem;
-  padding: 2.5rem;
+/* modal spinner */
+.modal-body .spinner-border {
+  font-size: 1rem;
+  padding: 2rem;
   color: var(--primary-color);
 }
 
@@ -191,5 +192,15 @@ input.form-control:focus {
   background: rgb(255, 145, 0);
   padding: 0.25rem;
   border-radius: 50%;
+  font-size: 1rem;
+}
+
+.main-spinner-div {
+  margin-top: 10vh;
+}
+
+.main-spinner-div .main-spinner {
+  color: var(--primary-color) !important;
+  padding: 2rem;
   font-size: 1rem;
 }

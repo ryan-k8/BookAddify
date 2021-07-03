@@ -19,7 +19,8 @@ class book {
     this.name = name;
     this.author = author;
     this.publisher = publisher;
-    this.imgSrc = resSrc;
+    this.imgSrc = imgSrc;
+    this.resSrc = resSrc;
     this.summary = summary;
   }
 }
@@ -44,7 +45,72 @@ class UI {
 
   // fetch from external api
   static fetchFromApi(queryName) {
-    console.log(`fetching from ext api for : ${queryName}`);
+    return new Promise((resolve, reject) => {
+      // still testing
+      fetch("test.json")
+        .then((res) => {
+          const status = res.status;
+          if (status === 200) {
+            return res.json();
+          } else {
+            UI.showAlert("danger", `Connection Error : ${status}`);
+          }
+        })
+        .then((data) => {
+          resolve(data);
+        })
+        .catch((err) => UI.showAlert("danger", err));
+    });
+  }
+
+  static showSpinners(type) {
+    if (type == "mainbody") {
+      const spinner = document.createElement("div");
+      spinner.classList.add(
+        "Spinner",
+        "main-spinner-div",
+        "d-flex",
+        "w-100",
+        "justify-content-center"
+      );
+      const spinnerDiv = document.createElement("div");
+      spinnerDiv.classList.add("main-spinner", "spinner-border");
+      spinnerDiv.setAttribute("role", "status");
+      const spanInside = document.createElement("span");
+      spanInside.className = "visually-hidden";
+      spanInside.innerHTML = "Loading...";
+
+      spinnerDiv.append(spanInside);
+      spinner.append(spinnerDiv);
+
+      document.querySelector(".main-app").appendChild(spinner);
+    }
+
+    if (type == "modalbody") {
+      const spinner = document.createElement("div");
+      spinner.classList.add(
+        "Spinner",
+        "modal-spinner",
+        "d-flex",
+        "align-items-center",
+        "justify-content-center"
+      );
+      const spinnerDiv = document.createElement("div");
+      spinnerDiv.classList.add("spinner-border");
+      spinnerDiv.setAttribute("role", "status");
+      const spanInside = document.createElement("span");
+      spanInside.className = "visually-hidden";
+      spanInside.innerHTML = "Loading...";
+
+      spinnerDiv.append(spanInside);
+      spinner.append(spinnerDiv);
+
+      document.querySelector(".modal-body").appendChild(spinner);
+    }
+  }
+
+  static removeSpinners() {
+    document.querySelector(".Spinner").remove();
   }
 }
 
@@ -56,7 +122,11 @@ addBtn.addEventListener("click", (e) => {
   if (searchInput.value === "") {
     UI.showAlert("danger", "Please enter something");
   } else {
-    UI.fetchFromApi(searchInput.value.trim());
+    UI.showSpinners("mainbody");
+    UI.fetchFromApi(searchInput.value.trim()).then((data) => {
+      UI.removeSpinners();
+      // UI.renderItems(data) [TODO];
+    });
   }
   e.preventDefault();
 });
