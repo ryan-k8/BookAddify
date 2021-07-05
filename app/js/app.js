@@ -10,7 +10,7 @@ firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 
-// firestore database
+// reference to the firestore database
 const db = firebase.firestore(app);
 
 // individual book class
@@ -47,7 +47,10 @@ class UI {
   static fetchFromApi(queryName) {
     return new Promise((resolve, reject) => {
       // still testing
-      fetch("test.json")
+      // mock delay url : https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay={}ms
+      // TODO fix heroku deployed api
+      // local host api http://127.0.0.1:5000/query/
+      fetch(`http://127.0.0.1:5000/query/${queryName}`)
         .then((res) => {
           const status = res.status;
           if (status === 200) {
@@ -114,6 +117,20 @@ class UI {
   }
 }
 
+class Firebase {
+  static addToDb(data) {
+    // doc w/ custom id :  db.collection('users').doc('id-here').setdata();
+    db.collection("app")
+      .add(data)
+      .then((docRef) =>
+        UI.showAlert("success", `Added To Firebase : ${docRef.id}`)
+      )
+      .catch((err) =>
+        UI.showAlert("error", `Firebase Error Adding Item : ${err}`)
+      );
+  }
+}
+
 const addBtn = document.getElementById("basic-addon2");
 const searchBtn = document.getElementById("basic-addon1");
 const searchInput = document.getElementById("search-input");
@@ -124,9 +141,10 @@ addBtn.addEventListener("click", (e) => {
   } else {
     UI.showSpinners("mainbody");
     UI.fetchFromApi(searchInput.value.trim()).then((data) => {
+      Firebase.addToDb(data);
       UI.removeSpinners();
-      // UI.renderItems(data) [TODO];
     });
+    // UI.renderItemsFromFirebase() [TODO];
   }
   e.preventDefault();
 });
