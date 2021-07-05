@@ -24,7 +24,7 @@ def book_scrape(book_name):
         'div', {'class': 'property_value'}).contents[0]
     book_summary = soup_.find('div', {'itemprop': 'reviewBody'})
     if (book_summary is None):
-        book_summary = ''
+        book_summary_clean = ''
     else:
         book_summary = book_summary.contents[1:]
         book_summary_clean = ''
@@ -34,7 +34,7 @@ def book_scrape(book_name):
     # primary dwnld
     book_dwnld_primary = soup_.find('a', {'class': 'addDownloadedBook'})
     if (book_dwnld_primary is None):
-        book_dwnld_title = 'null'
+        book_dwnld_title_clean = 'null'
         book_dwnld_src = 'null'
     else:
         book_dwnld_title = book_dwnld_primary.contents[2].split()
