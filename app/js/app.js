@@ -45,7 +45,7 @@ class UI {
 
   // fetch from external api
   static fetchFromApi(queryName) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // still testing
       // mock delay url : https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay={}ms
       // TODO fix heroku deployed api
@@ -86,7 +86,7 @@ class UI {
       spinnerDiv.append(spanInside);
       spinner.append(spinnerDiv);
 
-      document.querySelector(".main-app").appendChild(spinner);
+      document.querySelector("#main-fdb-container").appendChild(spinner);
     }
 
     if (type == "modalbody") {
@@ -115,6 +115,8 @@ class UI {
   static removeSpinners() {
     document.querySelector(".Spinner").remove();
   }
+
+  static renderItems(bookDat) {}
 }
 
 class Firebase {
@@ -128,6 +130,21 @@ class Firebase {
       .catch((err) =>
         UI.showAlert("error", `Firebase Error Adding Item : ${err}`)
       );
+  }
+
+  static readDb() {
+    return new Promise((resolve) => {
+      db.collection("app")
+        .get()
+        .then((collection) => {
+          let db = [];
+          collection.forEach((doc) => {
+            db.push({ firebaseId: doc.id, data: doc.data() });
+          });
+          resolve(db);
+        })
+        .catch((err) => UI.showAlert("danger", `Firebase Read Error : ${err}`));
+    });
   }
 }
 
