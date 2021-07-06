@@ -116,7 +116,53 @@ class UI {
     document.querySelector(".Spinner").remove();
   }
 
-  static renderItems(bookDat) {}
+  static renderItemsFromFirebaseData(docArray) {
+    const booksDiv = document.createElement("div");
+    booksDiv.classList.add(
+      "row",
+      "row-cols-1",
+      "row-cols-md-3",
+      "row-cols-xl-4",
+      "g-3",
+      "g-md-4",
+      "mx-auto",
+      "justify-content-center"
+    );
+    docArray.forEach((doc) => {
+      const bookDiv = document.createElement("div");
+      bookDiv.classList.add("col", "mx-auto", "mx-sm-0");
+      bookDiv.setAttribute("style", "width: 20rem !important");
+      bookDiv.innerHTML = ` <div class="card" data-firebase-id="${
+        doc.firebaseId
+      }">
+      <img
+        src="${doc.data.resources.image}"
+        class="card-img-top"
+        alt="..."
+        style="height: 17rem !important"
+      />
+      <div class="card-body">
+        <h5 class="card-title">${doc.data.book}</h5>
+        <div class="au-pub d-flex justify-content-between">
+          <h6 class="card-subtitle text-muted ms-2">${doc.data.author}</h6>
+          <h6 class="card-subtitle text-muted me-2">${doc.data.publisher}</h6>
+        </div>
+        <p class="card-text">
+        ${doc.data.summary.substring(0, 80) + "..."}
+        </p>
+        <div class="d-flex justify-content-between align-items-center">
+          <a href="${
+            doc.data.resources.downloads[1]
+          }" type="button" class="btn btn-success me-2">Download</a>
+          <i class="fas fa-trash fa-2x"></i>
+        </div>
+      </div>
+    </div>`;
+      booksDiv.appendChild(bookDiv);
+    });
+    // append booksDiv (having all books) to dom
+    document.getElementById("main-fdb-container").appendChild(booksDiv);
+  }
 }
 
 class Firebase {
@@ -155,6 +201,8 @@ const searchInput = document.getElementById("search-input");
 addBtn.addEventListener("click", (e) => {
   if (searchInput.value === "") {
     UI.showAlert("danger", "Please enter something");
+
+    //Firebase.readDb().then((data) => console.log(data));
   } else {
     UI.showSpinners("mainbody");
     UI.fetchFromApi(searchInput.value.trim()).then((data) => {
@@ -164,4 +212,11 @@ addBtn.addEventListener("click", (e) => {
     // UI.renderItemsFromFirebase() [TODO];
   }
   e.preventDefault();
+});
+
+window.addEventListener("DOMContentLoaded", async () => {
+  setTimeout(UI.showSpinners("mainbody"), 2000);
+  // let database = await Firebase.readDb();
+  // UI.removeSpinners();
+  // UI.renderItemsFromFirebaseData(database);
 });
