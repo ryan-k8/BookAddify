@@ -13,18 +13,6 @@ const app = firebase.initializeApp(firebaseConfig);
 // reference to the firestore database
 const db = firebase.firestore(app);
 
-// individual book class
-class book {
-  constructor(name, author, publisher, imgSrc, resSrc, summary) {
-    this.name = name;
-    this.author = author;
-    this.publisher = publisher;
-    this.imgSrc = imgSrc;
-    this.resSrc = resSrc;
-    this.summary = summary;
-  }
-}
-
 // ui interface class
 class UI {
   static showAlert(status, message) {
@@ -148,13 +136,13 @@ class UI {
           <h6 class="card-subtitle text-muted me-2">${doc.data.publisher}</h6>
         </div>
         <p class="card-text">
-        ${doc.data.summary.substring(0, 80) + "..."}
+        ${doc.data.summary.substring(0, 50) + "..."}
         </p>
         <div class="d-flex justify-content-between align-items-center">
           <a href="${
             doc.data.resources.downloads[1]
-          }" type="button" class="btn btn-success me-2">Download</a>
-          <i class="fas fa-trash fa-2x"></i>
+          }" type="button" class="btn btn-success me-2" target="_blank">Download</a>
+          <i class="fas fa-trash fa-2x" id="remove-btn"></i>
         </div>
       </div>
     </div>`;
@@ -192,31 +180,86 @@ class Firebase {
         .catch((err) => UI.showAlert("danger", `Firebase Read Error : ${err}`));
     });
   }
+  static removeFromDb(docId) {
+    return new Promise((resolve) => {
+      db.collection("app")
+        .doc(docId)
+        .delete()
+        .then(() => {
+          UI.showAlert("success", "Successfully removed from Firebase");
+          resolve("deleted");
+        })
+        .catch((err) =>
+          UI.showAlert("danger", `Firebase remove error : ${err}`)
+        );
+    });
+  }
 }
 
 const addBtn = document.getElementById("basic-addon2");
 const searchBtn = document.getElementById("basic-addon1");
 const searchInput = document.getElementById("search-input");
 
-addBtn.addEventListener("click", (e) => {
+addBtn.addEventListener("click", async (e) => {
   if (searchInput.value === "") {
     UI.showAlert("danger", "Please enter something");
-
-    //Firebase.readDb().then((data) => console.log(data));
   } else {
+    // clear items from windowDOMContentLoaded Event.
+    document.querySelector("#main-fdb-container").innerHTML = null;
+
     UI.showSpinners("mainbody");
-    UI.fetchFromApi(searchInput.value.trim()).then((data) => {
-      Firebase.addToDb(data);
-      UI.removeSpinners();
-    });
-    // UI.renderItemsFromFirebase() [TODO];
+    const query = searchInput.value.trim();
+    let apiData = await UI.fetchFromApi(query);
+    Firebase.addToDb(apiData);
+
+    let firebaseDb = await Firebase.readDb();
+    UI.removeSpinners();
+    UI.renderItemsFromFirebaseData(firebaseDb);
   }
   e.preventDefault();
 });
 
 window.addEventListener("DOMContentLoaded", async () => {
   setTimeout(UI.showSpinners("mainbody"), 2000);
-  // let database = await Firebase.readDb();
-  // UI.removeSpinners();
-  // UI.renderItemsFromFirebaseData(database);
+  let firebaseDb = await Firebase.readDb();
+  UI.removeSpinners();
+  UI.renderItemsFromFirebaseData(firebaseDb);
 });
+
+//removal (from both firebase & UI)
+document
+  .querySelector("#main-fdb-container")
+  .addEventListener("click", async (e) => {
+    if (e.target.id === "remove-btn") {
+      const parentDiv = e.target.parentNode;
+
+      const removeSpinner = document.createElement("div");
+      removeSpinner.setAttribute("role", "spinner");
+      removeSpinner.classList.add("spinner-border", "text-danger");
+
+      parentDiv.replaceChild(removeSpinner, e.target);
+
+      // solves unknown deletion err (caused by DOM in some book items)
+      let firebaseDocId;
+      if (
+        parentDiv.parentElement.parentElement.hasAttribute("data-firebase-id")
+      ) {
+        firebaseDocId =
+          parentDiv.parentElement.parentElement.getAttribute(
+            "data-firebase-id"
+          );
+      } else {
+        firebaseDocId =
+          parentDiv.parentElement.parentElement.parentElement.getAttribute(
+            "data-firebase-id"
+          );
+      }
+
+      await Firebase.removeFromDb(firebaseDocId);
+      const bookItemDiv = parentDiv.parentElement.parentElement.parentElement;
+      bookItemDiv.remove();
+
+      // move to the top alert (kinda clunky?);
+      window.scrollTo(0, 0);
+    }
+  });
