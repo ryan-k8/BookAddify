@@ -28,7 +28,7 @@ class UI {
     // clear alert div
     setTimeout(() => {
       document.querySelector(".alert").remove();
-    }, 1200);
+    }, 1600);
   }
 
   // fetch from external api
@@ -36,9 +36,7 @@ class UI {
     return new Promise((resolve) => {
       // still testing
       // mock delay url : https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay={}ms
-      // TODO fix heroku deployed api
-      // local host api http://127.0.0.1:5000/query/
-      fetch(`http://127.0.0.1:5000/query/${queryName}`)
+      fetch(`https://immense-bastion-95607.herokuapp.com/query/${queryName}`)
         .then((res) => {
           const status = res.status;
           if (status === 200) {
@@ -209,8 +207,18 @@ addBtn.addEventListener("click", async (e) => {
 
     UI.showSpinners("mainbody");
     const query = searchInput.value.trim();
-    let apiData = await UI.fetchFromApi(query);
-    Firebase.addToDb(apiData);
+
+    // incase of error
+    try {
+      let apiData = await UI.fetchFromApi(query);
+      Firebase.addToDb(apiData);
+    } catch (err) {
+      UI.showAlert(
+        "warning",
+        "Couldn't add the book due to error caused by the api."
+      );
+      UI.removeSpinners();
+    }
 
     let firebaseDb = await Firebase.readDb();
     UI.removeSpinners();

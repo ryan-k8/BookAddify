@@ -210,4 +210,11 @@ input.form-control:focus {
 }
 .card:hover {
   transform: scale(1.075) !important;
+
+  margin: 0.25rem 0;
+}
+@media (max-width: 600px) {
+  .card:hover {
+    margin: 0.8rem 0 !important;
+  }
 }
