@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 
 
 def book_scrape(book_name):
-    BASE_URL = 'https://1lib.in'
-    response = requests.get(f'https://1lib.in/s/{book_name}?order=year').text
+    BASE_URL = 'https://3lib.net'
+    response = requests.get(f'https://3lib.net/s/{book_name}?order=year').text
     soup = BeautifulSoup(response, 'html.parser')
 
     # the first result's url (for project anyway)
@@ -19,7 +19,12 @@ def book_scrape(book_name):
 
     book_author = soup_.find('a', {'itemprop': 'author'}).contents[0]
     book_publisher = soup_.find(
-        'div', {'class': 'bookProperty property_publisher'}).find('div', {'class': {'property_value'}}).contents[0]
+        'div', {'class': 'bookProperty property_publisher'})
+    if (book_publisher is None):
+        book_publisher_clean = ''
+    else:
+        book_publisher_clean = book_publisher.find(
+            'div', {'class': {'property_value'}}).contents[0]
     book_release_yr = soup_.find('div', {'class': 'bookProperty property_year'}).find(
         'div', {'class': 'property_value'}).contents[0]
     book_summary = soup_.find('div', {'itemprop': 'reviewBody'})
@@ -48,7 +53,7 @@ def book_scrape(book_name):
     RESULT = {
         'book': book_title_clean,
         'author': book_author,
-        'publisher': book_publisher,
+        'publisher': book_publisher_clean,
         'release': book_release_yr,
         'summary': book_summary_clean,
         'resources': {
