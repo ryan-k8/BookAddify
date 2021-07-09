@@ -1,15 +1,61 @@
 import requests
 from bs4 import BeautifulSoup
+import json
 
 
-def book_scrape(book_name):
+def book_search(book_name):
+    '''returns 5 search items w/ scraped data'''
+    SEARCH_RESULT = list()
     BASE_URL = 'https://3lib.net'
-    response = requests.get(f'https://3lib.net/s/{book_name}?order=year').text
+    response = requests.get(
+        f'https://3lib.net/s/{book_name}/?order=year').text
     soup = BeautifulSoup(response, 'html.parser')
+    search_items = soup.find_all('div', 'exactMatch')
+    for item in search_items[0:5]:
+        title = item.find('h3', {'itemprop': 'name'}).a.get_text()
+        id = item.find('h3', {'itemprop': 'name'}).a['href'][6:].split('/')
+        id = id[0]+'-'+id[1]
+        try:
+            img = item.find('img')['data-srcset'].split(',')[1].split()[0]
+        except AttributeError:
+            img = ''
+        try:
+            author = item.find('a', {'itemprop': 'author'}).get_text()
+        except AttributeError:
+            author = ''
+        try:
+            publisher = item.find(
+                'div', {'title': 'Publisher'}).a.get_text()
+        except AttributeError:
+            publisher = ''
 
-    # the first result's url (for project anyway)
-    most_relevant = soup.find('h3', {'itemprop': 'name'}).find('a')['href']
-    response_ = requests.get(f'{BASE_URL+most_relevant}').text
+        try:
+            year = item.find('div', {'class': 'property_year'}).find(
+                'div', {'class': 'property_value'}).get_text()
+        except AttributeError:
+            year = ''
+        try:
+            language = item.find('div', {'class': 'property_language'}).find(
+                'div', {'class': 'property_value'}).get_text()
+        except AttributeError:
+            language = ''
+        SEARCH_ITEM = {
+            'title': title,
+            'id': id,
+            'img': img,
+            'author': author,
+            'publisher': publisher,
+            'year': year,
+            'language': language
+
+        }
+        SEARCH_RESULT.append(SEARCH_ITEM)
+    return json.dumps(SEARCH_RESULT)
+
+
+def book_scrape(url):
+    BASE_URL = 'https://3lib.net'
+    response_ = requests.get(url).text
     soup_ = BeautifulSoup(response_, 'html.parser')
 
     book_title = soup_.find('h1', {'itemprop': 'name'}).contents[0].split()
@@ -61,4 +107,16 @@ def book_scrape(book_name):
             'downloads': book_dwnld_lst
         }
     }
+    return RESULT
+
+
+def book_add_quick(book_name):
+    '''returns data of the most relevant & newest book'''
+    BASE_URL = 'https://3lib.net'
+    response = requests.get(f'https://3lib.net/s/{book_name}?order=year').text
+    soup = BeautifulSoup(response, 'html.parser')
+
+    # the first result's url (for project anyway)
+    most_relevant = soup.find('h3', {'itemprop': 'name'}).find('a')['href']
+    RESULT = book_scrape(f'{BASE_URL+most_relevant}')
     return RESULT
