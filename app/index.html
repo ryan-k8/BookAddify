@@ -52,22 +52,26 @@
           aria-labelledby="staticBackdropLabel"
           aria-hidden="true"
         >
-          <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div
+            class="
+              modal-dialog
+              modal-dialog-centered
+              modal-dialog-scrollable
+              modal-lg
+            "
+          >
             <div class="modal-content">
               <div class="modal-header">
+                <p class="display-6" id="modalHeading">Search Results</p>
                 <button
                   type="button"
                   class="btn-close"
                   data-bs-dismiss="modal"
                   aria-label="Close"
+                  id="modal-close-btn"
                 ></button>
               </div>
-              <div class="modal-body">
-                <!-- <div class='modal-spiner d-flex align-items-center justify-content-center'>
-            <div class="spinner-border text-info" role='status'>
-              <span class="visually-hidden"> Loading...</span>
-            </div> -->
-              </div>
+              <div class="modal-body"></div>
             </div>
           </div>
         </div>
@@ -81,6 +85,7 @@
                 class="btn-toggler px-1"
                 data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop"
+                id="modal-toggler-btn"
               >
                 <i class="fas fa-search"></i>
               </a>

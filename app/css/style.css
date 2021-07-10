@@ -218,3 +218,18 @@ input.form-control:focus {
     margin: 0.8rem 0 !important;
   }
 }
+
+.search-result-item-div {
+  border: 1.25px solid #ccc;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  height: auto !important;
+}
+
+.search-result-item-div:hover {
+  transform: translateY(-8px);
+}
+
+.firebase-add-spinner {
+  padding: 0.5rem !important;
+}

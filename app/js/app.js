@@ -32,11 +32,12 @@ class UI {
   }
 
   // fetch from external api
-  static fetchFromApi(queryName) {
+  static fetchFromApi(endpoint, query) {
     return new Promise((resolve) => {
       // still testing
       // mock delay url : https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay={}ms
-      fetch(`https://immense-bastion-95607.herokuapp.com/query/${queryName}`)
+      //https://immense-bastion-95607.herokuapp.com/query/
+      fetch(`${endpoint}${query}`)
         .then((res) => {
           const status = res.status;
           if (status === 200) {
@@ -149,6 +150,88 @@ class UI {
     // append booksDiv (having all books) to dom
     document.getElementById("main-fdb-container").appendChild(booksDiv);
   }
+
+  static renderSearchItems(searchData) {
+    const modalBodyDiv = document.querySelector(".modal-body");
+    searchData.forEach((item) => {
+      const searchItemDiv = document.createElement("div");
+      searchItemDiv.classList.add("search-result-item-div", "mb-3", "md-md-4");
+      searchItemDiv.innerHTML = `
+      <div class="container w-100">
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        <div
+          class="col-12 col-sm-12 col-md-12 col-lg-4 p-2 p-md-4"
+        >
+          <img
+            src="${item.img}"
+            class="card-img rounded-start"
+            alt="..."
+            style="height: 22rem !important"
+          />
+        </div>
+        <div class="col col-sm-12 col-md-12 col-lg p-2 p-sm-4">
+          <h5 class="text-center mb-2">${item.title}</h5>
+          <div class="book-details p-1 my-2">
+            <div
+              class="
+                d-flex
+                justify-content-between
+                align-items-center
+                my-2
+                border-bottom
+              "
+            >
+              <div>
+                <p class="text-muted">Author:</p>
+              </div>
+              <div>
+                <p class="text-muted ms-1">${item.author}</p>
+              </div>
+            </div>
+            <div
+              class="
+                d-flex
+                justify-content-between
+                align-items-center
+                my-2
+                border-bottom
+              "
+            >
+              <div>
+                <p class="text-muted">Publisher:</p>
+              </div>
+              <div>
+                <p class="text-muted ms-1">
+                  ${item.publisher}
+                </p>
+              </div>
+            </div>
+            <div
+              class="
+                d-flex
+                justify-content-between
+                align-items-center
+                my-2
+                border-bottom
+              "
+            >
+              <div>
+                <p class="text-muted">Year: ${item.year}</p>
+              </div>
+              <div>
+                <p class="text-muted ms-1">Language: ${item.language}</p>
+              </div>
+            </div>
+          </div>
+          <a href="##" class="btn btn-warning" id="fdb-add-btn" data-book-id="${item.id}"
+           >Add To Firestore Db</a
+          >
+        </div>
+      </div>
+    </div>`;
+      modalBodyDiv.appendChild(searchItemDiv);
+    });
+  }
 }
 
 class Firebase {
@@ -197,6 +280,7 @@ class Firebase {
 const addBtn = document.getElementById("basic-addon2");
 const searchBtn = document.getElementById("basic-addon1");
 const searchInput = document.getElementById("search-input");
+const modalCloseBtn = document.getElementById("modal-close-btn");
 
 addBtn.addEventListener("click", async (e) => {
   if (searchInput.value === "") {
@@ -204,22 +288,23 @@ addBtn.addEventListener("click", async (e) => {
   } else {
     // clear items from windowDOMContentLoaded Event.
     document.querySelector("#main-fdb-container").innerHTML = null;
-
     UI.showSpinners("mainbody");
     const query = searchInput.value.trim();
-
     // incase of error
     try {
-      let apiData = await UI.fetchFromApi(query);
+      let apiData = await UI.fetchFromApi(
+        "https://immense-bastion-95607.herokuapp.com/query/",
+        query
+      );
       Firebase.addToDb(apiData);
     } catch (err) {
       UI.showAlert(
         "warning",
         "Couldn't add the book due to error caused by the api."
       );
+      console.log(err);
       UI.removeSpinners();
     }
-
     let firebaseDb = await Firebase.readDb();
     UI.removeSpinners();
     UI.renderItemsFromFirebaseData(firebaseDb);
@@ -271,3 +356,57 @@ document
       window.scrollTo(0, 0);
     }
   });
+
+// clear content inside modal on closing
+modalCloseBtn.addEventListener(
+  "click",
+  () => (document.querySelector(".modal-body").innerHTML = null)
+);
+
+//searching books from UI input
+searchBtn.addEventListener("click", async (e) => {
+  const query = searchInput.value;
+  if (query === "") {
+    UI.showAlert("danger", "please enter something");
+  } else {
+    document.querySelector(".modal-body").innerHTML = null;
+    UI.showSpinners("modalbody");
+    let searchData = await UI.fetchFromApi(
+      "https://immense-bastion-95607.herokuapp.com/search/",
+      query
+    );
+    UI.removeSpinners();
+    UI.renderSearchItems(searchData);
+  }
+});
+
+// event for addtofirestoredb
+document.body.addEventListener("click", async (e) => {
+  const firebaseAddSpinner = document.createElement("div");
+  firebaseAddSpinner.classList.add(
+    "spinner-border",
+    "text-warning",
+    "firebase-add-spinner"
+  );
+
+  const doneIcon = document.createElement("i");
+  doneIcon.classList.add("fas", "fa-check-circle", "fa-2x", "text-success");
+
+  if (e.target.hasAttribute("data-book-id")) {
+    const bookId = e.target.getAttribute("data-book-id");
+    e.target.parentElement.replaceChild(firebaseAddSpinner, e.target);
+    let bookData = await UI.fetchFromApi(
+      "https://immense-bastion-95607.herokuapp.com/book/",
+      bookId
+    );
+    Firebase.addToDb(bookData);
+    firebaseAddSpinner.parentElement.replaceChild(doneIcon, firebaseAddSpinner);
+
+    //same rendering on main body
+    document.querySelector("#main-fdb-container").innerHTML = null;
+    UI.showSpinners("mainbody");
+    let fdb = await Firebase.readDb();
+    UI.removeSpinners();
+    UI.renderItemsFromFirebaseData(fdb);
+  }
+});
