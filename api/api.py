@@ -11,7 +11,7 @@ def book_search(book_name):
         f'https://3lib.net/s/{book_name}/?order=year').text
     soup = BeautifulSoup(response, 'html.parser')
     search_items = soup.find_all('div', 'exactMatch')
-    for item in search_items[0:5]:
+    for item in search_items:
         title = item.find('h3', {'itemprop': 'name'}).a.get_text()
         id = item.find('h3', {'itemprop': 'name'}).a['href'][6:].split('/')
         id = id[0]+'-'+id[1]
