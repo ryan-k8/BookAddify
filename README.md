@@ -1,9 +1,8 @@
-# BookAddify
+# BookAddify [![Netlify Status](https://api.netlify.com/api/v1/badges/6e0e2c38-6d49-472f-98fc-bf0a37170930/deploy-status)](https://app.netlify.com/sites/bookaddify/deploys)
+
 vanilla js app using fetch api to get book data from flask api &amp; persisting to firebase storage w/ deletion capability.
 
-[LIVE](https://bookaddify.netlify.app)
----
-<h3 align="left">Main App</h3>
+<h3 align="left">App</h3>
 <p align="left"> 
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a>
 <a href="https://getbootstrap.com" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/bootstrap/bootstrap-plain-wordmark.svg" alt="bootstrap" width="40" height="40"/> </a>
@@ -16,7 +15,3 @@ vanilla js app using fetch api to get book data from flask api &amp; persisting 
 <a href="https://heroku.com" target="_blank"> <img src="https://www.vectorlogo.zone/logos/heroku/heroku-icon.svg" alt="heroku" width="40" height="40"/> </a>
 <a href="https://www.python.org" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> </a>
 </p>
-
-
-
-![bookaddify](https://user-images.githubusercontent.com/75524300/124936108-e1b2ca00-e023-11eb-8fa3-5b783fc904e8.png)
