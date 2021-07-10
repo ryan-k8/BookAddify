@@ -17,8 +17,11 @@ def book_search(book_name):
         id = id[0]+'-'+id[1]
         try:
             img = item.find('img')['data-srcset'].split(',')[1].split()[0]
-        except AttributeError:
-            img = ''
+        except (AttributeError, KeyError):
+            try:
+                img = item.find('img')['data-src']
+            except (AttributeError, KeyError):
+                img = ''
         try:
             author = item.find('a', {'itemprop': 'author'}).get_text()
         except AttributeError:
